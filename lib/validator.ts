@@ -9,22 +9,18 @@ export default abstract class Validator {
 	private [ERROR]: Record<string, any> = {}
 	private [IS_VALID]: boolean = false
 
-	@Exclude()
-	public getErrors(): Record<string, any> {
+	public getError(): Record<string, any> {
 		return this[ERROR]
 	}
 
-	@Exclude()
 	public isValid() {
 		return this[IS_VALID]
 	}
 
-	@Exclude()
 	public toJSON() {
 		return instanceToPlain(this)
 	}
 
-	@Exclude()
 	public async validateModel() {
 		let result = await validate(this)
 		const errors = this.setError(result)
@@ -41,12 +37,10 @@ export default abstract class Validator {
 		}
 	}
 
-	@Exclude()
 	public clearError() {
 		this[ERROR] = {}
 	}
 
-	@Exclude()
 	private setError(result: ValidationError[]): Record<string, any> {
 		let propBag: Record<string, any> = {}
 		if (result) {
@@ -68,7 +62,6 @@ export default abstract class Validator {
 		return propBag
 	}
 
-	@Exclude()
 	private watchFields(parentKeys?: string[]) {
 		let target = this
 		if (parentKeys) {

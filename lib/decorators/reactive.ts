@@ -6,21 +6,10 @@ export default function Reactive() {
 			[x: string]: any
 			constructor(...args: any[]) {
 				super(...args)
-				let proto = constructor.prototype
-				const target = reactive(this)
-				while (proto && proto !== Object.prototype) {
-					const props = Object.getOwnPropertyNames(proto)
-					props.forEach(prop => {
-						if (typeof this[prop] === 'function' && prop !== 'constructor') {
-							this[prop] = this[prop].bind(target)
-						}
-					})
-					proto = Object.getPrototypeOf(proto)
+				if (this.watchFields) {
+					this.watchFields()
 				}
-				if (target.watchFields) {
-					target.watchFields()
-				}
-				return target
+				return reactive(this)
 			}
 		}
 	}
