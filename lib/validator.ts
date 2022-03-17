@@ -9,8 +9,8 @@ export default abstract class Validator {
 	private [ERROR]: Record<string, any> = {}
 	private [IS_VALID]: boolean = false
 
-	public getError(): Record<string, any> {
-		return this[ERROR]
+	public getError() {
+		return this[ERROR] as { [x in Exclude<keyof this, keyof Validator>]?: this[x] }
 	}
 
 	public isValid() {
@@ -18,7 +18,7 @@ export default abstract class Validator {
 	}
 
 	public toJSON() {
-		return instanceToPlain(this)
+		return instanceToPlain(this) as { [x in Exclude<keyof this, keyof Validator>]: this[x] }
 	}
 
 	public async validateModel() {

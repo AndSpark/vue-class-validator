@@ -6,10 +6,11 @@ export default function Reactive() {
 			[x: string]: any
 			constructor(...args: any[]) {
 				super(...args)
-				if (this.watchFields) {
-					this.watchFields()
+				const target = reactive(this)
+				if (target.watchFields) {
+					target.watchFields()
 				}
-				return reactive(this)
+				return target
 			}
 		}
 	}
