@@ -17,5 +17,12 @@
 		"noImplicitAny": false,
 		"lib": ["esnext", "dom"]
 	},
-	"include": ["lib/**/*.ts", "lib/**/*.d.ts", "lib/**/*.tsx"]
+	"include": [
+		"lib/**/*.ts",
+		"lib/**/*.d.ts",
+		"lib/**/*.tsx",
+		"demo/**/*.ts",
+		"demo/**/*.d.ts",
+		"demo/**/*.tsx"
+	]
 }

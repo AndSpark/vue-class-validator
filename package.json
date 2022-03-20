@@ -4,7 +4,9 @@
 	"description": "",
 	"main": "lib/index.ts",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"dev": "vite",
+		"build": "vue-tsc --noEmit && vite build",
+		"preview": "vite preview"
 	},
 	"repository": {
 		"url": "https://github.com/AndSpark/vue-class-validator",
@@ -31,6 +33,11 @@
 		"class-validator": "^0.13.2",
 		"typescript": "^4.5.4",
 		"vue": "^3.2.25",
-		"vue-demi": "^0.12.1"
+		"vue-demi": "^0.12.1",
+		"@vitejs/plugin-vue": "^2.2.0",
+		"@vitejs/plugin-vue-jsx": "^1.3.8",
+		"vite": "^2.8.0",
+		"vue-tsc": "^0.29.8",
+		"reflect-metadata": "^0.1.13"
 	}
 }
