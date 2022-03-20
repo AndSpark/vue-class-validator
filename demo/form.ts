@@ -6,17 +6,17 @@ import {
 	Length,
 	MaxLength,
 	MinLength,
-	ValidateNested
+	ValidateNested,
 } from 'class-validator'
 import { Validator, Reactive } from '../lib'
 import 'reflect-metadata'
 
-export class Profile {
+export class Profile1 {
 	@IsOptional()
 	avatar?: string
 
 	@Length(2, 4, {
-		message: '姓名长度应在2到4间'
+		message: '姓名长度应在2到4间',
 	})
 	realName: string
 
@@ -25,9 +25,9 @@ export class Profile {
 }
 
 @Reactive()
-export class CreateUserForm extends Validator {
+export class CreateUserForm1 extends Validator {
 	@Length(4, 12, {
-		message: '用户名长度应在4到12间'
+		message: '用户名长度应在4到12间',
 	})
 	username: string = ''
 
@@ -41,7 +41,7 @@ export class CreateUserForm extends Validator {
 	@MaxLength(12, { message: '密码长度不应大于12' })
 	password: string = ''
 
-	@Type(() => Profile)
+	@Type(() => Profile1)
 	@ValidateNested()
-	profiles: Profile[] = []
+	profiles: Profile1[] = []
 }
