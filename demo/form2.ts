@@ -8,7 +8,6 @@ import {
 	MinLength,
 	ValidateNested
 } from 'class-validator'
-import { Validator, Reactive } from '../lib'
 import 'reflect-metadata'
 
 export class Profile {
@@ -24,8 +23,7 @@ export class Profile {
 	description?: string
 }
 
-@Reactive()
-export class CreateUserForm extends Validator {
+export class CreateUserForm {
 	@Length(4, 12, {
 		message: '用户名长度应在4到12间'
 	})

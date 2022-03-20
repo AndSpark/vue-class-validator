@@ -45,13 +45,8 @@ export default abstract class Validator {
 		for (const key in errors) {
 			this[ERROR][key] = errors[key]
 		}
-
 		for (const key in this[ERROR]) {
-			if (errors[key]) {
-				this[ERROR][key] = this[ERROR][key]
-			} else {
-				delete this[ERROR][key]
-			}
+			this[ERROR][key] = errors[key]
 		}
 	}
 
