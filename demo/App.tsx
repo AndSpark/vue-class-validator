@@ -27,15 +27,20 @@ const field = (
 
 export default defineComponent({
 	setup() {
-		const { form, errors, validateForm, clearError, toInit } = useValidator(CreateUserForm)
+		const { form, errors, validateForm, clearError, toInit, toJSON } = useValidator(CreateUserForm)
 		const add = () => form.profiles.push(new Profile())
 		const del = () => form.profiles.shift()
+		const toJson = () => console.log(toJSON())
 		return () => (
 			<div class='container'>
 				<field label='用户名' v-model={form.username} error={errors.username}></field>
 				{form.profiles.map((v, i) => (
 					<>
-						<field label='姓名' v-model={v.realName} error={errors.profiles?.[i]?.realName}></field>
+						<field
+							label='姓名'
+							v-model={v.realName}
+							error={errors.profiles?.[i]?.description}
+						></field>
 						<field
 							label='描述'
 							v-model={v.description}
@@ -52,6 +57,7 @@ export default defineComponent({
 					<button onClick={() => del()}>移除</button>
 					<button onClick={() => clearError()}>取消验证</button>
 					<button onClick={() => toInit()}>初始化</button>
+					<button onClick={() => toJson()}>toJSON</button>
 				</div>
 			</div>
 		)
