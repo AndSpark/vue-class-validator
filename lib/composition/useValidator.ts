@@ -28,41 +28,19 @@ interface JSONArray extends Array<JSONValue> {}
 export default function useValidator<T extends object>(constructor: ClassConstructor<T>) {
 	const errors = reactive<Errors<T>>({})
 	const isValid = ref(false)
-	let pauseWatch = false
 	const originForm = new constructor()
 	const form = reactive(originForm)
-
 	const toJSON = () => instanceToPlain(originForm) as ToJSON<T>
-
+	let pauseWatch = false
 	const toInit = () => {
 		pauseWatch = true
 		// 重新初始化时会触发watch的表单验证，由于是异步，所以需要setTimeout暂停watch
-		setTimeout(() => {
-			pauseWatch = false
-		})
+		setTimeout(() => (pauseWatch = false))
 		clearError()
-
 		const f = new constructor()
 		for (const key in form) {
 			//@ts-ignore
 			form[key] = f[key]
-		}
-	}
-
-	async function validateForm() {
-		let result = await validate(form)
-		const err = gerErrors(result)
-		for (const key in err) {
-			errors[key] = err[key]
-		}
-		for (const key in errors) {
-			errors[key] = err[key]
-		}
-	}
-
-	function clearError() {
-		for (const key in errors) {
-			delete errors[key]
 		}
 	}
 
@@ -80,6 +58,23 @@ export default function useValidator<T extends object>(constructor: ClassConstru
 	onBeforeUnmount(() => {
 		stopWatch()
 	})
+
+	async function validateForm() {
+		let result = await validate(form)
+		const err = gerErrors(result)
+		for (const key in err) {
+			errors[key] = err[key]
+		}
+		for (const key in errors) {
+			errors[key] = err[key]
+		}
+	}
+
+	function clearError() {
+		for (const key in errors) {
+			delete errors[key]
+		}
+	}
 	return {
 		form,
 		isValid,
@@ -87,7 +82,7 @@ export default function useValidator<T extends object>(constructor: ClassConstru
 		toJSON,
 		toInit,
 		errors,
-		clearError,
+		clearError
 	}
 }
 

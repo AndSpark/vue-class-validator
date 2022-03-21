@@ -12,12 +12,12 @@ const field = (
 		},
 		set(val) {
 			emit('update:modelValue', val)
-		},
+		}
 	})
 	return (
 		<div>
 			<p>
-				<span>{props.label}</span>
+				<span style='margin-right:0.5rem'>{props.label}</span>
 				<input v-model={value.value}></input>
 				{!!props.error && <span>错误提示: {props.error}</span>}
 			</p>
@@ -31,7 +31,7 @@ export default defineComponent({
 		const add = () => form.profiles.push(new Profile())
 		const del = () => form.profiles.shift()
 		return () => (
-			<div>
+			<div class='container'>
 				<field label='用户名' v-model={form.username} error={errors.username}></field>
 				{form.profiles.map((v, i) => (
 					<>
@@ -46,14 +46,16 @@ export default defineComponent({
 				<field label='邮箱' v-model={form.email} error={errors.email}></field>
 				<field label='手机' v-model={form.phone} error={errors.phone}></field>
 				<field label='密码' v-model={form.password} error={errors.password}></field>
-				<button onClick={() => validateForm()}>验证</button>
-				<button onClick={() => add()}>添加</button>
-				<button onClick={() => del()}>移除</button>
-				<button onClick={() => clearError()}>取消验证</button>
-				<button onClick={() => toInit()}>初始化</button>
+				<div>
+					<button onClick={() => validateForm()}>验证</button>
+					<button onClick={() => add()}>添加</button>
+					<button onClick={() => del()}>移除</button>
+					<button onClick={() => clearError()}>取消验证</button>
+					<button onClick={() => toInit()}>初始化</button>
+				</div>
 			</div>
 		)
-	},
+	}
 })
 
 // export default defineComponent({
