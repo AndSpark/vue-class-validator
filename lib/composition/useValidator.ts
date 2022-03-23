@@ -43,7 +43,6 @@ export default function useValidator<T extends object>(constructor: ClassConstru
 			form[key] = f[key]
 		}
 	}
-
 	const stopWatch = watch(
 		computed(() => instanceToPlain(form)),
 		async (val, oldVal) => {
@@ -52,13 +51,13 @@ export default function useValidator<T extends object>(constructor: ClassConstru
 			const err = gerErrors(result)
 			const keys = diff(val, oldVal)
 			setError(errors, keys, err)
+			console.log(result)
 		},
 		{ deep: true }
 	)
 	onBeforeUnmount(() => {
 		stopWatch()
 	})
-
 	async function validateForm() {
 		let result = await validate(form)
 		const err = gerErrors(result)
@@ -69,7 +68,6 @@ export default function useValidator<T extends object>(constructor: ClassConstru
 			errors[key] = err[key]
 		}
 	}
-
 	function clearError() {
 		for (const key in errors) {
 			delete errors[key]
@@ -77,11 +75,11 @@ export default function useValidator<T extends object>(constructor: ClassConstru
 	}
 	return {
 		form,
-		isValid,
+		errors,
 		validateForm,
+		isValid,
 		toJSON,
 		toInit,
-		errors,
 		clearError
 	}
 }

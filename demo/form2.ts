@@ -13,6 +13,7 @@ import {
 	ValidateNested
 } from 'class-validator'
 import 'reflect-metadata'
+import { api, InjectUsername } from './utils'
 
 export class Profile {
 	@IsOptional()
@@ -31,9 +32,8 @@ export class Profile {
 }
 
 export class CreateUserForm {
-	@Length(4, 12, {
-		message: '用户名长度应在4到12间'
-	})
+	@InjectUsername()
+	@Length(4, 12, { message: '用户名长度应在4到12间' })
 	username: string = ''
 
 	@ValidateIf(o => !isMobilePhone(o.phone))
@@ -50,4 +50,8 @@ export class CreateUserForm {
 	@Type(() => Profile)
 	@ValidateNested()
 	profiles: Profile[] = []
+
+	@Type(() => Profile)
+	@ValidateNested()
+	profile: Profile = new Profile()
 }
