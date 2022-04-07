@@ -1,8 +1,4 @@
-import { ClassConstructor } from 'class-transformer'
-import { Profile } from './form2'
 import 'reflect-metadata'
-import { createHydrationRenderer, reactive, ref, watch } from 'vue'
-
 export const api = {
 	getUsername: () => Promise.resolve('最后的Hibana')
 }
