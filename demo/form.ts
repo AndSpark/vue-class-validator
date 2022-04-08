@@ -14,7 +14,7 @@ import {
 } from 'class-validator'
 import 'reflect-metadata'
 import { SetupContext, computed } from 'vue'
-import { Component } from '../lib/composition/useComponent'
+import { Component, ComponentNested, useComponent } from '../lib/composition/useComponent'
 import { field } from './field'
 import { api, InjectUsername } from './utils'
 
@@ -33,7 +33,7 @@ export class Profile {
 		message: '长度应在4到12间'
 	})
 	@IsOptional()
-	@Component(field)
+	@Component(field, { label: '描述' })
 	description?: string
 }
 
@@ -54,14 +54,11 @@ export class CreateUserForm {
 
 	@MinLength(4, { message: '密码长度不应低于4' })
 	@MaxLength(12, { message: '密码长度不应大于12' })
-	// @Component(field, { label: '密码' })
+	@Component(field, { label: '密码' })
 	password: string = ''
 
 	@Type(() => Profile)
 	@ValidateNested()
-	profiles: Profile[] = []
-
-	@Type(() => Profile)
-	@ValidateNested()
+	@ComponentNested(Profile)
 	profile: Profile = new Profile()
 }

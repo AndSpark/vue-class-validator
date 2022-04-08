@@ -51,6 +51,11 @@ export default function useValidator<T extends object>(constructor: ClassConstru
 			const err = gerErrors(result)
 			const keys = diff(val, oldVal)
 			setError(errors, keys, err)
+			if (result.length) {
+				isValid.value = false
+			} else {
+				isValid.value = true
+			}
 			console.log(result)
 		},
 		{ deep: true }
