@@ -1,4 +1,4 @@
-import { defineComponent, h, reactive } from 'vue-demi'
+import { defineComponent, h, isVue2, reactive } from 'vue-demi'
 import { useValidator } from '..'
 
 export function Component(component: any, props: Record<string, any> = {}) {
@@ -61,14 +61,23 @@ function createFormComponent(componentList, form, errors) {
 			if (typeof form[key] === 'object') {
 				return createFormComponent(componentList[key], form[key], errors[key])
 			}
-			return h(v.component, {
+			const props = {
 				modelValue: form[key],
 				'onUpdate:modelValue': (value: any) => {
 					form[key] = value
 				},
 				error: errors && errors[key],
 				...v.props
-			})
+			}
+			if (isVue2) {
+				delete props.modelValue
+				delete props['onUpdate:modelValue']
+				props.value = form[key]
+				props.onInput = (value: any) => {
+					form[key] = value
+				}
+			}
+			return h(v.component, props)
 		})
 	])
 }
