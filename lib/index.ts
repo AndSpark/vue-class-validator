@@ -1,4 +1,4 @@
-import Validator from './class/validator'
-import Reactive from './decorators/reactive'
-import useValidator from './composition/useValidator'
-export { Reactive, Validator, useValidator }
+export * from './class/validator'
+export * from './decorators/reactive'
+export * from './composition/useValidator'
+export * from './composition/useComponent'

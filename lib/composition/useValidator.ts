@@ -1,6 +1,6 @@
 import { ClassConstructor, instanceToPlain } from 'class-transformer'
 import { validate, ValidationError } from 'class-validator'
-import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue-demi'
 
 type Errors<T> = {
 	[x in keyof T]?: T[x] extends PropertyKey ? string : Errors2<T[x]>
@@ -25,7 +25,7 @@ interface JSONObject {
 
 interface JSONArray extends Array<JSONValue> {}
 
-export default function useValidator<T extends object>(constructor: ClassConstructor<T>) {
+export function useValidator<T extends object>(constructor: ClassConstructor<T>) {
 	const errors = reactive<Errors<T>>({})
 	const isValid = ref(false)
 	const originForm = new constructor()

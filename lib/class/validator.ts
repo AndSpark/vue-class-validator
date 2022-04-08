@@ -23,7 +23,7 @@ type ValidatorJSON<T> = {
 	[x in Exclude<keyof T, keyof Validator>]: keyof T extends PropertyKey ? T[x] : ValidatorJSON<T[x]>
 }
 
-export default abstract class Validator {
+export abstract class Validator {
 	private [ERROR]: ValidatorError<this> = {}
 	private [IS_VALID]: boolean = false
 

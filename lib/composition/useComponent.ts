@@ -1,4 +1,4 @@
-import { defineComponent, h, reactive } from 'vue'
+import { defineComponent, h, reactive } from 'vue-demi'
 import { useValidator } from '..'
 
 export function Component(component: any, props: Record<string, any> = {}) {

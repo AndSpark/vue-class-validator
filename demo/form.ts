@@ -13,8 +13,7 @@ import {
 	ValidateNested
 } from 'class-validator'
 import 'reflect-metadata'
-import { SetupContext, computed } from 'vue'
-import { Component, ComponentNested, useComponent } from '../lib/composition/useComponent'
+import { Component, ComponentNested } from '../lib/composition/useComponent'
 import { field } from './field'
 import { api, InjectUsername } from './utils'
 
