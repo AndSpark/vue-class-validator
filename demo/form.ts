@@ -18,10 +18,6 @@ import { field } from './field'
 import { api, InjectUsername } from './utils'
 
 export class Profile {
-	@IsOptional()
-	@Component(field, { label: '头像' })
-	avatar?: string
-
 	@Length(2, 4, {
 		message: '姓名长度应在2到4间'
 	})
@@ -40,7 +36,7 @@ export class CreateUserForm {
 	@InjectUsername()
 	@Length(4, 12, { message: '用户名长度应在4到12间' })
 	@Component(field, { label: '用户名' })
-	username: string = ''
+	username: string = '还没有用户名'
 
 	@ValidateIf(o => !isMobilePhone(o.phone))
 	@IsEmail({}, { message: '请填写正确的邮箱' })

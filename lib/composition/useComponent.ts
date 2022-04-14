@@ -16,9 +16,7 @@ export function ComponentNested<T extends { new (...args: any[]): any }>(constru
 export function useComponent<T extends { new (...args: any[]): any }>(constructor: T) {
 	const { form, errors, validateForm, clearError, toInit, toJSON, isValid } =
 		useValidator(constructor)
-
 	const list = getFormComponent(form)
-
 	const component = defineComponent({
 		name: constructor.name,
 		setup() {
@@ -27,14 +25,14 @@ export function useComponent<T extends { new (...args: any[]): any }>(constructo
 	})
 
 	return {
+		component,
 		form,
 		errors,
 		validateForm,
 		clearError,
 		toInit,
 		toJSON,
-		isValid,
-		component
+		isValid
 	}
 }
 
@@ -68,14 +66,6 @@ function createFormComponent(componentList, form, errors) {
 				},
 				error: errors && errors[key],
 				...v.props
-			}
-			if (isVue2) {
-				delete props.modelValue
-				delete props['onUpdate:modelValue']
-				props.value = form[key]
-				props.onInput = (value: any) => {
-					form[key] = value
-				}
 			}
 			return h(v.component, props)
 		})

@@ -19,7 +19,7 @@ export default defineComponent({
 
 		useInject(form)
 		return () => (
-			<div class='w-[300px] mx-auto'>
+			<div class='w-[300px] mx-auto mt-10'>
 				<userForm></userForm>
 				<div class='flex w-full justify-center'>
 					<button class={btn} onClick={() => validateForm()}>

@@ -1,6 +1,11 @@
 import 'reflect-metadata'
 export const api = {
-	getUsername: () => Promise.resolve('最后的Hibana')
+	getUsername: () =>
+		new Promise(r =>
+			setTimeout(() => {
+				r('最后的Hibana')
+			}, 1000)
+		)
 }
 
 export const InjectUsername = () => (target: any, key: string) =>

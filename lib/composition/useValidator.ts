@@ -26,9 +26,9 @@ interface JSONObject {
 interface JSONArray extends Array<JSONValue> {}
 
 export function useValidator<T extends object>(constructor: ClassConstructor<T>) {
-	const errors = reactive<Errors<T>>({})
 	const isValid = ref(false)
 	const originForm = new constructor()
+	const errors = reactive<Errors<T>>(initErrors(originForm))
 	const form = reactive(originForm)
 	const toJSON = () => instanceToPlain(originForm) as ToJSON<T>
 	let pauseWatch = false
@@ -144,4 +144,19 @@ function diff<T = JSONArray | JSONObject>(data: T, oldData: T) {
 		}
 	}
 	return keys
+}
+
+function initErrors(target: any): any {
+	const errors: Record<string, any> = {}
+	for (const key in target) {
+		if (typeof target[key] !== 'object') {
+			target[key] = null
+		} else {
+			const childErrors = initErrors(target[key])
+			if (Object.keys(childErrors).length) {
+				target[key] = childErrors
+			}
+		}
+	}
+	return errors
 }
