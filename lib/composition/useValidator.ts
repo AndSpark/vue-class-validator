@@ -150,11 +150,11 @@ function initErrors(target: any): any {
 	const errors: Record<string, any> = {}
 	for (const key in target) {
 		if (typeof target[key] !== 'object') {
-			target[key] = null
+			errors[key] = null
 		} else {
 			const childErrors = initErrors(target[key])
 			if (Object.keys(childErrors).length) {
-				target[key] = childErrors
+				errors[key] = childErrors
 			}
 		}
 	}
