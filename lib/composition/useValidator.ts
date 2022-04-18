@@ -126,11 +126,14 @@ function setError(target: any, keys: any, errors: any) {
 function diff<T = JSONArray | JSONObject>(data: T, oldData: T) {
 	const keys: Record<string, any> = {}
 	let target
-	if ((Array.isArray(data) && data.length) || Object.keys(data).length) {
+	if ((Array.isArray(data) && data.length) || (data && Object.keys(data).length)) {
 		target = data
 	} else if (oldData) {
 		target = oldData
 	}
+
+	if (!target) return keys
+
 	for (const key in target) {
 		if (typeof data[key] !== 'object') {
 			if (oldData && data[key] !== oldData[key]) {
