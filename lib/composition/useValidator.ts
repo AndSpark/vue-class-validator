@@ -135,7 +135,7 @@ function diff<T = JSONArray | JSONObject>(data: T, oldData: T) {
 	if (!target) return keys
 
 	for (const key in target) {
-		if (typeof data[key] !== 'object') {
+		if (typeof data[key] !== 'object' || data[key] === null) {
 			if (oldData && data[key] !== oldData[key]) {
 				keys[key] = null
 			}
