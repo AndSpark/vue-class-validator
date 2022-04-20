@@ -29,6 +29,9 @@ export function useValidator<T extends object>(constructor: ClassConstructor<T>)
 	const isValid = ref(false)
 	const originForm = new constructor()
 	const errors = reactive<Errors<T>>(initErrors(originForm))
+	const errorMessage = computed(() => {
+		return createErrorMsg(errors)
+	})
 	const form = reactive(originForm)
 	const toJSON = () => instanceToPlain(originForm) as ToJSON<T>
 	let pauseWatch = false
@@ -81,6 +84,7 @@ export function useValidator<T extends object>(constructor: ClassConstructor<T>)
 	return {
 		form,
 		errors,
+		errorMessage,
 		validateForm,
 		isValid,
 		toJSON,
@@ -162,4 +166,17 @@ function initErrors(target: any): any {
 		}
 	}
 	return errors
+}
+
+function createErrorMsg(errors: any) {
+	for (const key in errors) {
+		if (typeof errors[key] !== 'object') {
+			if (errors[key]) {
+				return errors[key]
+			}
+		} else {
+			const childErrors = createErrorMsg(errors[key])
+			return childErrors
+		}
+	}
 }

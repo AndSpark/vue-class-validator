@@ -14,7 +14,8 @@ export default defineComponent({
 			clearError,
 			toInit,
 			isValid,
-			component: userForm
+			component: userForm,
+			errorMessage
 		} = useComponent(CreateUserForm)
 
 		useInject(form)
@@ -22,7 +23,13 @@ export default defineComponent({
 			<div class='w-[300px] mx-auto mt-10'>
 				<userForm></userForm>
 				<div class='flex w-full justify-center'>
-					<button class={btn} onClick={() => validateForm()}>
+					<button
+						class={btn}
+						onClick={async () => {
+							await validateForm()
+							console.log(errorMessage)
+						}}
+					>
 						验证
 					</button>
 					<button class={btn} onClick={() => clearError()}>
