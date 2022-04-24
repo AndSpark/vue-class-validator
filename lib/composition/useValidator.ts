@@ -75,6 +75,11 @@ export function useValidator<T extends object>(constructor: ClassConstructor<T>)
 		for (const key in errors) {
 			errors[key] = err[key]
 		}
+		if (result.length) {
+			isValid.value = false
+		} else {
+			isValid.value = true
+		}
 	}
 	function clearError() {
 		for (const key in errors) {
