@@ -145,7 +145,9 @@ function diff<T = JSONArray | JSONObject>(data: T, oldData: T) {
 				keys[key] = null
 			}
 		} else {
-			const childKeys = diff(data[key], oldData[key])
+			const data1 = (data && data[key]) || null
+			const data2 = (oldData && oldData[key]) || null
+			const childKeys = diff(data1, data2)
 			if (Object.keys(childKeys).length) {
 				keys[key] = childKeys
 			}
