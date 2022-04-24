@@ -16,7 +16,7 @@ export default defineComponent({
 			isValid,
 			component: userForm,
 			errorMessage
-		} = useComponent(CreateUserForm)
+		} = useComponent(CreateUserForm, true)
 
 		useInject(form)
 		return () => (

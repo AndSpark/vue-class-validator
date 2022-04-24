@@ -13,9 +13,21 @@ export function ComponentNested<T extends { new (...args: any[]): any }>(constru
 	}
 }
 
-export function useComponent<T extends { new (...args: any[]): any }>(constructor: T) {
-	const { form, errors, validateForm, clearError, toInit, toJSON, isValid, errorMessage } =
-		useValidator(constructor)
+export function useComponent<T extends { new (...args: any[]): any }>(
+	constructor: T,
+	stopValidate?: boolean
+) {
+	const {
+		form,
+		errors,
+		validateForm,
+		clearError,
+		toInit,
+		toJSON,
+		isValid,
+		errorMessage,
+		stopWatch
+	} = useValidator(constructor)
 	const list = getFormComponent(form)
 	const component = defineComponent({
 		name: constructor.name,
@@ -33,7 +45,8 @@ export function useComponent<T extends { new (...args: any[]): any }>(constructo
 		clearError,
 		toInit,
 		toJSON,
-		isValid
+		isValid,
+		stopWatch
 	}
 }
 

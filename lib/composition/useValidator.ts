@@ -86,6 +86,7 @@ export function useValidator<T extends object>(constructor: ClassConstructor<T>)
 		errors,
 		errorMessage,
 		validateForm,
+		stopWatch,
 		isValid,
 		toJSON,
 		toInit,
