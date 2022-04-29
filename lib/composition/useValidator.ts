@@ -59,7 +59,6 @@ export function useValidator<T extends object>(constructor: ClassConstructor<T>)
 			} else {
 				isValid.value = true
 			}
-			console.log(result)
 		},
 		{ deep: true }
 	)
@@ -67,6 +66,17 @@ export function useValidator<T extends object>(constructor: ClassConstructor<T>)
 		stopWatch()
 	})
 	async function validateForm() {
+		const proto = constructor.prototype
+		const descriptors = Object.getOwnPropertyDescriptors(proto)
+		for (const key in descriptors) {
+			if (key !== 'constructor' && typeof descriptors[key].value === 'function') {
+				const beforeValidate = Reflect.getMetadata('hook:beforeValidate', descriptors[key].value)
+				if (beforeValidate) {
+					beforeValidate.call(form)
+				}
+			}
+		}
+
 		let result = await validate(form)
 		const err = gerErrors(result)
 		for (const key in err) {

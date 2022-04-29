@@ -13,6 +13,7 @@ import {
 	ValidateNested
 } from 'class-validator'
 import 'reflect-metadata'
+import { BeforeValidate } from '../lib'
 import { Component, ComponentNested } from '../lib/composition/useComponent'
 import { field } from './field'
 import { api, InjectUsername } from './utils'
@@ -56,4 +57,9 @@ export class CreateUserForm {
 	@ValidateNested()
 	@ComponentNested(Profile)
 	profile: Profile = new Profile()
+
+	@BeforeValidate()
+	beforeValidate() {
+		console.log(this.username)
+	}
 }

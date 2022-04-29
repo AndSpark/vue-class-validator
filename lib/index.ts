@@ -1,4 +1,4 @@
 export * from './class/validator'
-export * from './decorators/reactive'
+export * from './decorators'
 export * from './composition/useValidator'
 export * from './composition/useComponent'

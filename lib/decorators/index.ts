@@ -15,3 +15,9 @@ export function Reactive() {
 		}
 	}
 }
+
+export function BeforeValidate() {
+	return function (target: any, key: string, descriptor: PropertyDescriptor) {
+		Reflect.defineMetadata('hook:beforeValidate', descriptor.value, descriptor.value)
+	}
+}
