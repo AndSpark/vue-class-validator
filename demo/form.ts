@@ -13,6 +13,7 @@ import {
 	ValidateNested
 } from 'class-validator'
 import 'reflect-metadata'
+import { reactive, ref } from 'vue'
 import { BeforeValidate } from '../lib'
 import { Component, ComponentNested } from '../lib/composition/useComponent'
 import { field } from './field'

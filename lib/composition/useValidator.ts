@@ -65,7 +65,7 @@ export function useValidator<T extends object>(constructor: ClassConstructor<T>)
 	onBeforeUnmount(() => {
 		stopWatch()
 	})
-	async function validateForm() {
+	async function validateForm(needThrowError = true) {
 		const proto = constructor.prototype
 		const descriptors = Object.getOwnPropertyDescriptors(proto)
 		for (const key in descriptors) {
@@ -87,6 +87,9 @@ export function useValidator<T extends object>(constructor: ClassConstructor<T>)
 		}
 		if (result.length) {
 			isValid.value = false
+			if (needThrowError) {
+				throw new Error(errorMessage.value)
+			}
 		} else {
 			isValid.value = true
 		}

@@ -17,7 +17,7 @@ export default defineComponent({
 			component: userForm,
 			errorMessage
 		} = useComponent(CreateUserForm, true)
-
+		console.log()
 		useInject(form)
 		return () => (
 			<div class='w-[300px] mx-auto mt-10'>
@@ -26,8 +26,11 @@ export default defineComponent({
 					<button
 						class={btn}
 						onClick={async () => {
-							await validateForm()
-							console.log(errorMessage)
+							try {
+								await validateForm()
+							} catch (error) {
+								console.dir(error)
+							}
 						}}
 					>
 						验证
