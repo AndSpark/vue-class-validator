@@ -1,14 +1,14 @@
 import { SetupContext, computed, defineComponent } from 'vue-demi'
 
 export const Field = defineComponent({
-	props: ['label', 'value', 'error'],
+	props: ['label', 'modelValue', 'error'],
 	setup(props, ctx) {
 		const innerValue = computed({
 			get() {
-				return props.value
+				return props.modelValue
 			},
 			set(val) {
-				ctx.emit('input', val)
+				ctx.emit('update:modelValue', val)
 			}
 		})
 		return {
@@ -26,6 +26,7 @@ export const Field = defineComponent({
 				invalid:border-pink-500 invalid:text-pink-600
 				focus:invalid:border-pink-500 focus:invalid:ring-pink-500`}
 					v-model={this.innerValue}
+					autocomplete='off'
 				></input>
 				{!!this.error && (
 					<span class='text-xs text-red-500 absolute right-2 bottom-0'>错误提示: {this.error}</span>

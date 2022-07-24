@@ -13,16 +13,11 @@ import {
 	ValidateNested
 } from 'class-validator'
 import 'reflect-metadata'
-import { BeforeValidate } from '../lib'
-import { VueValidator } from '../lib/class/vueValidator'
+import { Reactive } from '../lib'
+import { Validator } from '../lib/'
 import { api, InjectUsername } from './utils'
 
-export class Profile {
-	@Length(2, 4, {
-		message: '姓名长度应在2到4间'
-	})
-	realName: string
-
+export class Description {
 	@Length(4, 12, {
 		message: '长度应在4到12间'
 	})
@@ -30,7 +25,19 @@ export class Profile {
 	description?: string
 }
 
-export class CreateUserForm extends VueValidator {
+export class Profile {
+	@Length(2, 4, {
+		message: '姓名长度应在2到4间'
+	})
+	realName: string
+
+	@Type(() => Description)
+	@ValidateNested()
+	description: Description = new Description()
+}
+
+@Reactive()
+export class CreateUserForm extends Validator {
 	@InjectUsername()
 	@Length(4, 12, { message: '用户名长度应在4到12间' })
 	username: string = '还没有用户名'

@@ -1,10 +1,7 @@
-import { instanceToPlain } from 'class-transformer'
+import { computed, isReactive, reactive, watch } from 'vue'
 import { validate, ValidationError } from 'class-validator'
-import { toRef, watch } from 'vue-demi'
-
-const ERROR = Symbol('error')
-const IS_VALID = Symbol('isValid')
-
+import { instanceToPlain } from 'class-transformer'
+import Differ from '@netilon/differify'
 type ValidatorError<T> = {
 	[x in Exclude<keyof T, keyof Validator>]?: T[x] extends PropertyKey
 		? string
@@ -23,98 +20,112 @@ type ValidatorJSON<T> = {
 	[x in Exclude<keyof T, keyof Validator>]: keyof T extends PropertyKey ? T[x] : ValidatorJSON<T[x]>
 }
 
-export abstract class Validator {
-	private [ERROR]: ValidatorError<this> = {}
-	private [IS_VALID]: boolean = false
+const differify = new Differ()
 
-	public getError() {
-		return this[ERROR]
-	}
-
-	public isValid() {
-		return this[IS_VALID]
-	}
-
-	public toJSON() {
-		return instanceToPlain(this) as ValidatorJSON<this>
-	}
+export class Validator {
+	public __errors: ValidatorError<this> = reactive({})
+	public __isValid = false
 
 	public async validate() {
-		let result = await validate(this)
-		const errors = this.setError(result)
-		for (const key in errors) {
-			this[ERROR][key] = errors[key]
+		const result = await validate(this)
+		const errors = this.formatValidationError(result)
+		this.setError(errors)
+		if (Object.values(this.__errors).filter(v => v !== undefined).length) {
+			this.__isValid = false
+		} else {
+			this.__isValid = true
 		}
-		for (const key in this[ERROR]) {
-			this[ERROR][key] = errors[key]
-		}
+		return this.__isValid
 	}
 
-	public clearError() {
-		this[ERROR] = {}
+	public toPlain() {
+		const obj = instanceToPlain(this)
+		delete obj.__errors
+		delete obj.__isValid
+		return obj as ValidatorJSON<this>
 	}
 
-	private setError(result: ValidationError[]): Record<string, any> {
-		let propBag: Record<string, any> = {}
-		if (result) {
-			for (const error of result) {
-				if (error.children?.length) {
-					const errors = this.setError(error.children)
-					propBag[error.property] = errors
+	public toReactive() {
+		if (isReactive(this)) return this
+		const form = reactive(this)
+		watch(
+			computed(() => JSON.parse(JSON.stringify(form))),
+			(val, oldVal) => {
+				this.diff(oldVal, val)
+				if (Object.values(this.__errors).filter(v => v !== undefined).length) {
+					this.__isValid = false
 				} else {
-					for (const key in error.constraints) {
-						const msg = error.constraints[key]
-						propBag[error.property] = msg
+					this.__isValid = true
+				}
+			},
+			{
+				deep: true
+			}
+		)
+		return form
+	}
+
+	private setError(error) {
+		for (const key in this.__errors) {
+			delete this.__errors[key]
+		}
+		Object.assign(this.__errors, error)
+	}
+
+	private async diff(oldVal, val) {
+		const result = await validate(this)
+		const errors = this.formatValidationError(result)
+		const res = differify.compare(oldVal, val)
+		if (res.status === 'MODIFIED') {
+			let _s = res._
+			const changeKeys: string[][] = []
+			const _keys: string[][] = []
+			let _key: string[] = []
+			//@ts-ignore
+			delete _s.__errors
+			//@ts-ignore
+			delete _s.__isValid
+			do {
+				for (const key in _s) {
+					if (_s[key].status === 'EQUAL') continue
+					if (_s[key]._ === undefined) {
+						changeKeys.push([..._key, key])
+					} else {
+						_keys.push([..._key, key])
 					}
 				}
-			}
+				_key = _keys.pop() || []
+				_s = _key.length ? _key.reduce((p, c) => p![c]._, res._) : null
+			} while (_s)
+			changeKeys.forEach(key => {
+				key.reduce(
+					(p, c, i) => {
+						if (p[0][c] === undefined && i !== key.length - 1) p[0][c] = {}
+						if (p[1][c] === undefined && i !== key.length - 1) p[1][c] = {}
+						if (i === key.length - 1) {
+							p[1][c] = p[0][c]
+						}
+						return [p[0][c], p[1][c]]
+					},
+					[errors, this.__errors]
+				)
+			})
 		}
-
-		return propBag
 	}
 
-	private watchFields(parentKeys?: string[]) {
-		let target = this
-		if (parentKeys) {
-			target = parentKeys.reduce((p, c) => {
-				if (!p[c]) p[c] = {}
-				return p[c]
-			}, this)
-		}
-		for (const key in target) {
-			if (Object.prototype.hasOwnProperty.call(target, key)) {
-				if (typeof target[key] !== 'object' && typeof target[key] !== 'function') {
-					const element = toRef(target, key)
-					watch(element, async val => {
-						let result = await validate(this)
-						const errors = this.setError(result)
-						if (parentKeys) {
-							const error = parentKeys.reduce((p, c) => {
-								if (p && p[c]) return p[c]
-								return null
-							}, errors)
-							parentKeys.reduce((p, c, i) => {
-								if (!p[c]) p[c] = {}
-								if (i === parentKeys.length - 1) {
-									if (error && error[key]) {
-										;/[0-9]+/.test(key) ? (p[c] = error) : (p[c][key] = error[key])
-									} else {
-										;/[0-9]+/.test(key) ? (p[c] = null) : (p[c][key] = null)
-									}
-								}
-								return p[c]
-							}, this[ERROR])
-						} else {
-							//@ts-ignore
-							this[ERROR][key] = errors[key]
-						}
-						this[IS_VALID] = !Object.keys(errors).length ? true : false
-					})
-				} else if (typeof target[key] === 'object') {
-					const keys = parentKeys ? [...parentKeys, key] : [key]
-					this.watchFields(keys)
+	private formatValidationError(validationErrors: ValidationError[]) {
+		let errors: Record<string, any> = {}
+		for (const error of validationErrors) {
+			if (error.children?.length) {
+				const err = this.formatValidationError(error.children)
+				errors[error.property] = err
+			} else {
+				for (const key in error.constraints) {
+					const msg = error.constraints[key]
+					errors[error.property] = msg
 				}
 			}
 		}
+		return errors
 	}
 }
