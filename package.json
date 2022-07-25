@@ -20,8 +20,7 @@
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.13.2",
 		"reflect-metadata": "^0.1.13",
-		"vue": "^2.0.0 || >=3.0.0",
-		"vue-demi": "^0.12.1"
+		"vue": "^2.0.0 || >=3.0.0"
 	},
 	"peerDependenciesMeta": {
 		"@vue/composition-api": {
@@ -41,6 +40,7 @@
 		"vue-tsc": "^0.29.8"
 	},
 	"dependencies": {
-		"@netilon/differify": "^4.0.0"
+		"@netilon/differify": "^4.0.0",
+		"vue-demi": "^0.12.1"
 	}
 }

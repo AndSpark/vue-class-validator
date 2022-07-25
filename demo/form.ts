@@ -21,7 +21,6 @@ export class Description {
 	@Length(4, 12, {
 		message: '长度应在4到12间'
 	})
-	@IsOptional()
 	description?: string
 }
 

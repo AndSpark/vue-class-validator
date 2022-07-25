@@ -1,4 +1,4 @@
-import { defineComponent, getCurrentInstance, isReactive, onUpdated, watch } from 'vue-demi'
+import { defineComponent, getCurrentInstance, isReactive } from 'vue-demi'
 import { Field } from './Field'
 import { CreateUserForm } from './form'
 
@@ -11,6 +11,7 @@ export default defineComponent({
 		const form = new CreateUserForm()
 		const err = form.__errors
 		getCurrentInstance()!.data = { form }
+		console.log(isReactive(form.__isValid))
 		return () => (
 			<div class='container mx-auto w-1/2'>
 				<Field label='用户名' v-model={form.username} error={err.username}></Field>

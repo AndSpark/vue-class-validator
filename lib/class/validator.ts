@@ -1,4 +1,4 @@
-import { computed, isReactive, reactive, watch } from 'vue'
+import { computed, isReactive, reactive, ref, watch } from 'vue-demi'
 import { validate, ValidationError } from 'class-validator'
 import { instanceToPlain } from 'class-transformer'
 import Differ from '@netilon/differify'
@@ -23,6 +23,9 @@ type ValidatorJSON<T> = {
 const differify = new Differ()
 
 export class Validator {
+	// 全部的错误
+	private __innerErrors: ValidatorError<this> = {}
+	// 显示的错误
 	public __errors: ValidatorError<this> = reactive({})
 	public __isValid = false
 
@@ -30,11 +33,7 @@ export class Validator {
 		const result = await validate(this)
 		const errors = this.formatValidationError(result)
 		this.setError(errors)
-		if (Object.values(this.__errors).filter(v => v !== undefined).length) {
-			this.__isValid = false
-		} else {
-			this.__isValid = true
-		}
+		this.checkValid()
 		return this.__isValid
 	}
 
@@ -42,6 +41,7 @@ export class Validator {
 		const obj = instanceToPlain(this)
 		delete obj.__errors
 		delete obj.__isValid
+		delete obj.__innerErrors
 		return obj as ValidatorJSON<this>
 	}
 
@@ -52,11 +52,7 @@ export class Validator {
 			computed(() => JSON.parse(JSON.stringify(form))),
 			(val, oldVal) => {
 				this.diff(oldVal, val)
-				if (Object.values(this.__errors).filter(v => v !== undefined).length) {
-					this.__isValid = false
-				} else {
-					this.__isValid = true
-				}
+				this.checkValid()
 			},
 			{
 				deep: true
@@ -72,9 +68,18 @@ export class Validator {
 		Object.assign(this.__errors, error)
 	}
 
+	private checkValid() {
+		if (Object.values(this.__innerErrors).filter(v => v !== undefined).length) {
+			this.__isValid = false
+		} else {
+			this.__isValid = true
+		}
+	}
+
 	private async diff(oldVal, val) {
 		const result = await validate(this)
 		const errors = this.formatValidationError(result)
+		this.__innerErrors = errors
 		const res = differify.compare(oldVal, val)
 		if (res.status === 'MODIFIED') {
 			let _s = res._
@@ -85,6 +90,8 @@ export class Validator {
 			delete _s.__errors
 			//@ts-ignore
 			delete _s.__isValid
+			//@ts-ignore
+			delete _s.__innerErrors
 			do {
 				for (const key in _s) {
 					if (_s[key].status === 'EQUAL') continue

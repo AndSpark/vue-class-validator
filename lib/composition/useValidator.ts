@@ -1,6 +1,6 @@
 import { ClassConstructor, instanceToPlain } from 'class-transformer'
 import { validate, ValidationError } from 'class-validator'
-import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue-demi'
+import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue-demi'
 
 type Errors<T> = {
 	[x in keyof T]?: T[x] extends PropertyKey ? string : Errors2<T[x]>
