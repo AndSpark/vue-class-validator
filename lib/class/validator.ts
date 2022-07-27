@@ -92,6 +92,7 @@ export class Validator {
 			delete _s.__isValid
 			//@ts-ignore
 			delete _s.__innerErrors
+
 			do {
 				for (const key in _s) {
 					if (_s[key].status === 'EQUAL') continue
@@ -104,6 +105,7 @@ export class Validator {
 				_key = _keys.pop() || []
 				_s = _key.length ? _key.reduce((p, c) => p![c]._, res._) : null
 			} while (_s)
+
 			changeKeys.forEach(key => {
 				key.reduce(
 					(p, c, i) => {
@@ -117,6 +119,20 @@ export class Validator {
 					[errors, this.__errors]
 				)
 			})
+
+			this.clearNotExistError()
+		}
+	}
+
+	clearNotExistError(k?: string) {
+		const target = k ? this.__errors[k] : this.__errors
+		for (const key in target) {
+			if (this.__innerErrors[key] === undefined) {
+				delete target[key]
+			}
+			if (typeof target[key] === 'object') {
+				this.clearNotExistError(target[key])
+			}
 		}
 	}
 

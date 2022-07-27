@@ -1,5 +1,7 @@
 import { Type } from 'class-transformer'
 import {
+	ArrayMinSize,
+	IsDefined,
 	isEmail,
 	IsEmail,
 	isMobilePhone,
@@ -24,6 +26,13 @@ export class Description {
 	description?: string
 }
 
+export class Image {
+	name: string
+
+	@IsDefined()
+	url: string = '1'
+}
+
 export class Profile {
 	@Length(2, 4, {
 		message: '姓名长度应在2到4间'
@@ -33,6 +42,10 @@ export class Profile {
 	@Type(() => Description)
 	@ValidateNested()
 	description: Description = new Description()
+
+	@ArrayMinSize(1)
+	@ValidateNested()
+	images: Image[] = [new Image(), new Image()]
 }
 
 @Reactive()
@@ -41,7 +54,7 @@ export class CreateUserForm extends Validator {
 	@Length(4, 12, { message: '用户名长度应在4到12间' })
 	username: string = '还没有用户名'
 
-	@ValidateIf(o => !isMobilePhone(o.phone))
+	@ValidateIf(o => !isMobilePhone(o.phone, 'zh-CN'))
 	@IsEmail({}, { message: '请填写正确的邮箱' })
 	email: string = ''
 
@@ -52,7 +65,6 @@ export class CreateUserForm extends Validator {
 	@MaxLength(12, { message: '密码长度不应大于12' })
 	password: string = ''
 
-	@Type(() => Profile)
 	@ValidateNested()
 	profile: Profile = new Profile()
 }
