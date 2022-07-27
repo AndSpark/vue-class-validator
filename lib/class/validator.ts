@@ -23,6 +23,7 @@ type ValidatorJSON<T> = {
 const differify = new Differ()
 
 export class Validator {
+	private stopWatch: boolean = false
 	// 全部的错误
 	private __innerErrors: ValidatorError<this> = {}
 	// 显示的错误
@@ -51,6 +52,7 @@ export class Validator {
 		watch(
 			computed(() => JSON.parse(JSON.stringify(form))),
 			(val, oldVal) => {
+				if (this.stopWatch) return
 				this.diff(oldVal, val)
 				this.checkValid()
 			},
@@ -59,6 +61,27 @@ export class Validator {
 			}
 		)
 		return form
+	}
+
+	public toInit() {
+		this.stopWatch = true
+		const proto = Object.getPrototypeOf(this)
+		const form = new proto.constructor()
+		for (const key in form) {
+			if (['__errors', '__isValid', '__innerErrors'].includes(key)) continue
+			this[key] = form[key]
+		}
+		this.__isValid = false
+		setTimeout(() => {
+			this.clearError()
+			this.stopWatch = false
+		})
+	}
+
+	public clearError() {
+		for (const key in this.__errors) {
+			delete this.__errors[key]
+		}
 	}
 
 	private setError(error) {
@@ -86,13 +109,9 @@ export class Validator {
 			const changeKeys: string[][] = []
 			const _keys: string[][] = []
 			let _key: string[] = []
-			//@ts-ignore
-			delete _s.__errors
-			//@ts-ignore
-			delete _s.__isValid
-			//@ts-ignore
-			delete _s.__innerErrors
-
+			;['__errors', '__isValid', '__innerErrors'].forEach(v => {
+				delete _s![v]
+			})
 			do {
 				for (const key in _s) {
 					if (_s[key].status === 'EQUAL') continue
@@ -124,7 +143,7 @@ export class Validator {
 		}
 	}
 
-	clearNotExistError(k?: string) {
+	private clearNotExistError(k?: string) {
 		const target = k ? this.__errors[k] : this.__errors
 		for (const key in target) {
 			if (this.__innerErrors[key] === undefined) {

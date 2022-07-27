@@ -11,7 +11,7 @@ export default defineComponent({
 		const form = new CreateUserForm()
 		const err = form.__errors
 		getCurrentInstance()!.data = { form }
-		console.log(isReactive(form.__isValid))
+
 		return () => (
 			<div class='container mx-auto w-1/2'>
 				<Field label='用户名' v-model={form.username} error={err.username}></Field>
@@ -29,12 +29,12 @@ export default defineComponent({
 					<button class={btn} onClick={() => form.validate()}>
 						验证
 					</button>
-					{/* <button class={btn} onClick={() => clearError()}>
+					<button class={btn} onClick={() => form.clearError()}>
 						清除错误
 					</button>
-					<button class={btn} onClick={() => toInit()}>
+					<button class={btn} onClick={() => form.toInit()}>
 						初始化
-					</button> */}
+					</button>
 				</div>
 			</div>
 		)
