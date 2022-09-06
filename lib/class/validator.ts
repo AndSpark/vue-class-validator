@@ -57,7 +57,7 @@ export class Validator {
 				this.checkValid()
 			},
 			{
-				deep: true
+				deep: true,
 			}
 		)
 		return form
@@ -85,6 +85,7 @@ export class Validator {
 	}
 
 	private setError(error) {
+		this.__innerErrors = { ...error }
 		for (const key in this.__errors) {
 			delete this.__errors[key]
 		}

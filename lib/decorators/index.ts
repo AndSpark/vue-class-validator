@@ -28,7 +28,7 @@ export function Validate(
 				if (format) {
 					throw new Error(format(this[name].__errors))
 				}
-				throw new Error(JSON.stringify(Object.values(this[name].__errors)))
+				throw new Error(JSON.stringify(Object.values(this[name].__errors)?.[0]))
 			}
 			try {
 				await bindFn()
