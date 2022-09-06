@@ -14,3 +14,27 @@ export function Reactive() {
 		}
 	}
 }
+
+export function Validate(
+	name: string = 'formData',
+	format?: (error: Record<string, any>) => string
+) {
+	return function (target: any, key: string, descriptor: PropertyDescriptor) {
+		const fn = descriptor.value
+		descriptor.value = async function (...args: any) {
+			const bindFn = fn.bind(this, ...args)
+			await this[name].validate()
+			if (!this[name].__isValid) {
+				if (format) {
+					throw new Error(format(this[name].__errors))
+				}
+				throw new Error(JSON.stringify(Object.values(this[name].__errors)))
+			}
+			try {
+				await bindFn()
+			} catch (error) {
+				return Promise.reject(error)
+			}
+		}
+	}
+}
