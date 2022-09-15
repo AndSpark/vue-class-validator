@@ -24,11 +24,12 @@ export function Validate(
 		descriptor.value = async function (...args: any) {
 			const bindFn = fn.bind(this, ...args)
 			await this[name].validate()
+			const firstErrorMsg = getFirstErrorMsg(this[name].__errors)
 			if (!this[name].__isValid) {
 				if (format) {
 					throw new Error(format(this[name].__errors))
 				}
-				throw new Error(JSON.stringify(Object.values(this[name].__errors)?.[0]))
+				throw new Error(firstErrorMsg)
 			}
 			try {
 				await bindFn()
@@ -37,4 +38,19 @@ export function Validate(
 			}
 		}
 	}
+}
+
+function getFirstErrorMsg(obj: any) {
+	let firstError = ''
+	if (typeof obj === 'object') {
+		const errs = Object.values(obj).map(v => {
+			return getFirstErrorMsg(v)
+		})
+		if (errs[0]) {
+			firstError = errs[0]
+		}
+	} else {
+		return obj
+	}
+	return firstError
 }

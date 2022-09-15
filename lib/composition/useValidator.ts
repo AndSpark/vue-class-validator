@@ -72,6 +72,7 @@ export function useValidator<T extends object>(constructor: ClassConstructor<T>)
 			if (key !== 'constructor' && typeof descriptors[key].value === 'function') {
 				const beforeValidate = Reflect.getMetadata('hook:beforeValidate', descriptors[key].value)
 				if (beforeValidate) {
+					//@ts-ignore
 					beforeValidate.call(form)
 				}
 			}
@@ -108,7 +109,7 @@ export function useValidator<T extends object>(constructor: ClassConstructor<T>)
 		isValid,
 		toJSON,
 		toInit,
-		clearError
+		clearError,
 	}
 }
 

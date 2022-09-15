@@ -41,6 +41,9 @@
 	},
 	"dependencies": {
 		"@netilon/differify": "^4.0.0",
-		"vue-demi": "^0.12.1"
+		"@vue3-oop/plugin-vue-jsx": "^1.4.1",
+		"injection-js": "^2.4.0",
+		"vue-demi": "^0.12.1",
+		"vue3-oop": "^1.0.0"
 	}
 }

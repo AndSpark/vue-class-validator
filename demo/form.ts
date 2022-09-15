@@ -12,16 +12,15 @@ import {
 	MaxLength,
 	MinLength,
 	ValidateIf,
-	ValidateNested
+	ValidateNested,
 } from 'class-validator'
 import 'reflect-metadata'
-import { Reactive } from '../lib'
-import { Validator } from '../lib/'
+import { Reactive, Validator } from '../lib/'
 import { api, InjectUsername } from './utils'
 
 export class Description {
 	@Length(4, 12, {
-		message: '长度应在4到12间'
+		message: '长度应在4到12间',
 	})
 	description?: string
 }
@@ -35,7 +34,7 @@ export class Image {
 
 export class Profile {
 	@Length(2, 4, {
-		message: '姓名长度应在2到4间'
+		message: '姓名长度应在2到4间',
 	})
 	realName: string
 

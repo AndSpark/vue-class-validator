@@ -23,12 +23,28 @@ type ValidatorJSON<T> = {
 const differify = new Differ()
 
 export class Validator {
-	private stopWatch: boolean = false
+	private __stopWatch: boolean = false
 	// 全部的错误
 	private __innerErrors: ValidatorError<this> = {}
 	// 显示的错误
 	public __errors: ValidatorError<this> = reactive({})
 	public __isValid = false
+
+	constructor() {
+		if (isReactive(this)) {
+			watch(
+				computed(() => JSON.parse(JSON.stringify(this))),
+				(val, oldVal) => {
+					if (this.__stopWatch) return
+					this.diff(oldVal, val)
+					this.checkValid()
+				},
+				{
+					deep: true,
+				}
+			)
+		}
+	}
 
 	public async validate() {
 		const result = await validate(this)
@@ -41,6 +57,7 @@ export class Validator {
 	public toPlain() {
 		const obj = instanceToPlain(this)
 		delete obj.__errors
+		delete obj.__stopWatch
 		delete obj.__isValid
 		delete obj.__innerErrors
 		return obj as ValidatorJSON<this>
@@ -52,7 +69,7 @@ export class Validator {
 		watch(
 			computed(() => JSON.parse(JSON.stringify(form))),
 			(val, oldVal) => {
-				if (this.stopWatch) return
+				if (this.__stopWatch) return
 				this.diff(oldVal, val)
 				this.checkValid()
 			},
@@ -64,7 +81,7 @@ export class Validator {
 	}
 
 	public toInit() {
-		this.stopWatch = true
+		this.__stopWatch = true
 		const proto = Object.getPrototypeOf(this)
 		const form = new proto.constructor()
 		for (const key in form) {
@@ -74,7 +91,7 @@ export class Validator {
 		this.__isValid = false
 		setTimeout(() => {
 			this.clearError()
-			this.stopWatch = false
+			this.__stopWatch = false
 		})
 	}
 
