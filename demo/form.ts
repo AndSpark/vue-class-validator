@@ -16,7 +16,7 @@ import {
 } from 'class-validator'
 import 'reflect-metadata'
 import { Reactive, Validator } from '../lib/'
-import { api, InjectUsername } from './utils'
+import { InjectUsername } from './utils'
 
 export class Description {
 	@Length(4, 12, {

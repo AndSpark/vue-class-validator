@@ -22,7 +22,7 @@ type ValidatorJSON<T> = {
 
 const differify = new Differ()
 
-export class Validator {
+export abstract class Validator {
 	private __stopWatch: boolean = false
 	// 全部的错误
 	private __innerErrors: ValidatorError<this> = {}
